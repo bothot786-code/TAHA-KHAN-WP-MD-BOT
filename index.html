@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TAHA MD — Pair Code</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
+body{min-height:100vh;display:grid;place-items:center;background:#05070d;color:#e6f1ff;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:
+ radial-gradient(circle at 20% 20%,#00ffcc22,transparent 40%),
+ radial-gradient(circle at 80% 70%,#7b2fff33,transparent 45%)}
+.card{position:relative;width:min(92vw,420px);padding:36px 28px;border-radius:22px;
+ background:rgba(255,255,255,.05);border:1px solid rgba(0,255,204,.25);
+ backdrop-filter:blur(18px);box-shadow:0 0 45px #00ffcc22;text-align:center}
+.logo{width:110px;height:110px;border-radius:50%;object-fit:cover;
+ border:3px solid #00ffcc;box-shadow:0 0 30px #00ffcc66;margin-bottom:14px}
+h1{font-size:1.9rem;letter-spacing:3px;background:linear-gradient(90deg,#00ffcc,#7b2fff);
+ -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+p.sub{font-size:.82rem;opacity:.65;margin:6px 0 24px;letter-spacing:1px}
+input{width:100%;padding:15px 18px;border-radius:12px;border:1px solid #ffffff22;
+ background:#ffffff0d;color:#fff;font-size:1rem;outline:none;text-align:center;letter-spacing:2px}
+input:focus{border-color:#00ffcc;box-shadow:0 0 14px #00ffcc44}
+button{width:100%;margin-top:16px;padding:15px;border:0;border-radius:12px;cursor:pointer;
+ font-size:1rem;font-weight:700;letter-spacing:2px;color:#04121a;
+ background:linear-gradient(90deg,#00ffcc,#00b3ff);transition:.25s}
+button:hover{transform:translateY(-2px);box-shadow:0 8px 26px #00ffcc55}
+button:disabled{opacity:.5;cursor:not-allowed;transform:none}
+#out{margin-top:24px;min-height:60px}
+.code{font-size:2rem;font-weight:800;letter-spacing:6px;color:#00ffcc;
+ text-shadow:0 0 18px #00ffcc88;cursor:pointer;word-break:break-all}
+.hint{font-size:.75rem;opacity:.6;margin-top:8px;line-height:1.6}
+.err{color:#ff6b6b;font-size:.9rem}
+footer{margin-top:26px;font-size:.7rem;opacity:.45;letter-spacing:1px}
+a{color:#00ffcc;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="card">
+  <img class="logo" src="https://i.ibb.co/placeholder/taha-md.jpg" alt="TAHA MD">
+  <h1>TAHA MD</h1>
+  <p class="sub">WHATSAPP PAIR CODE GENERATOR</p>
+
+  <input id="num" type="tel" placeholder="923291489055" maxlength="15">
+  <button id="btn" onclick="pair()">GET PAIR CODE</button>
+
+  <div id="out"></div>
+
+  <footer>
+    OWNER : TAHA &nbsp;·&nbsp;
+    <a href="https://whatsapp.com/channel/0029Vb7e7Xd0wajm0hUt2b1R">CHANNEL</a>
+  </footer>
+</div>
+
+<script>
+async function pair(){
+  const n = document.getElementById('num').value.replace(/\D/g,'');
+  const out = document.getElementById('out');
+  const btn = document.getElementById('btn');
+  if(n.length < 10){ out.innerHTML='<p class="err">❌ Sahi number likhein (country code ke sath)</p>'; return; }
+  btn.disabled = true; out.innerHTML = '<p class="hint">⏳ Code generate ho raha hai...</p>';
+  try{
+    const r = await fetch('/code?number=' + n);
+    const d = await r.json();
+    if(d.code){
+      out.innerHTML = `<div class="code" onclick="navigator.clipboard.writeText('${d.code}')">${d.code}</div>
+        <p class="hint">WhatsApp → Linked Devices → Link with phone number<br>
+        (code par tap karke copy karein)</p>`;
+    } else out.innerHTML = '<p class="err">❌ ' + (d.error || 'Try again') + '</p>';
+  }catch(e){ out.innerHTML = '<p class="err">❌ Server error</p>'; }
+  btn.disabled = false;
+}
+document.getElementById('num').addEventListener('keydown',e=>e.key==='Enter'&&pair());
+</script>
+</body>
+</html>
